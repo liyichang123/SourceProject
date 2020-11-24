@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.KfwtUploadRecordFailMapper">
+
+  <resultMap id="kfwtUploadRecordFailMap" type="com.pig4cloud.pigx.admin.entity.KfwtUploadRecordFail">
+                  <id property="id" column="id"/>
+                        <result property="recordId" column="record_id"/>
+                        <result property="kfwtId" column="kfwt_id"/>
+                        <result property="failMsg" column="fail_msg"/>
+                        <result property="createat" column="createAt"/>
+                        <result property="createdate" column="createDate"/>
+                        <result property="modifyat" column="modifyAt"/>
+                        <result property="modifydate" column="modifyDate"/>
+                        <result property="delFlag" column="del_flag"/>
+            </resultMap>
+
+    <select id="getPage" resultType="com.pig4cloud.pigx.admin.entity.KfwtUploadRecordFail">
+		SELECT kur.*, qpg.gascylindercode AS gascylindercode FROM kfwt_upload_record_fail kur
+		LEFT JOIN qp_record qpr ON qpr.id = kur.record_id
+		LEFT JOIN qp_gascylinderrecord qpg ON qpg.id = qpr.gascylinderrecord_id
+		WHERE kur.del_flag = '0'
+		<if test="query.gascylindercode != null and query.gascylindercode != ''">
+			AND qpg.gascylindercode = #{query.gascylindercode}
+		</if>
+		<if test="query.startTime != null and query.startTime != ''">
+			AND DATE_FORMAT(kur.createDate, '%Y-%m-%d') &gt;= #{query.startTime}
+		</if>
+		<if test="query.endTime != null and query.endTime != ''">
+			AND DATE_FORMAT(kur.createDate, '%Y-%m-%d') &lt;= #{query.endTime}
+		</if>
+		ORDER BY kur.createDate DESC
+	</select>
+</mapper>

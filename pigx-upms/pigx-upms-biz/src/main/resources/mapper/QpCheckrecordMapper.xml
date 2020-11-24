@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.QpCheckrecordMapper">
+
+  <resultMap id="qpCheckrecordMap" type="com.pig4cloud.pigx.admin.entity.QpCheckrecord">
+                  <id property="id" column="id"/>
+                        <result property="gascylinderrecordId" column="gascylinderrecord_id"/>
+                        <result property="checkconfigId" column="checkconfig_id"/>
+                        <result property="result" column="result"/>
+                        <result property="remark" column="remark"/>
+                        <result property="gasamount" column="gasAmount"/>
+                        <result property="result1" column="result1"/>
+                        <result property="result2" column="result2"/>
+                        <result property="result3" column="result3"/>
+                        <result property="result4" column="result4"/>
+                        <result property="result5" column="result5"/>
+                        <result property="result6" column="result6"/>
+                        <result property="result7" column="result7"/>
+                        <result property="result8" column="result8"/>
+                        <result property="result9" column="result9"/>
+                        <result property="result10" column="result10"/>
+                        <result property="createat" column="createAt"/>
+                        <result property="createdate" column="createDate"/>
+                        <result property="modifyat" column="modifyAt"/>
+                        <result property="modifydate" column="modifyDate"/>
+                        <result property="delFlag" column="del_flag"/>
+                        <result property="deptId" column="dept_id"/>
+                        <result property="tenantId" column="tenant_id"/>
+	  					<result property="sigil" column="sigil"/>
+            </resultMap>
+
+	<!-- 分页查询 -->
+	<select id="getQpCheckrecordPage" resultType="com.pig4cloud.pigx.admin.entity.QpCheckrecord">
+		SELECT qcr.id, qcr.gascylinderrecord_id, qcr.checkconfig_id, qcr.result, qcr.remark, qcr.gasAmount,
+		qcr.result1, qcr.result2, qcr.result3, qcr.result4, qcr.result5, qcr.result6, qcr.result7, qcr.result8, qcr.result9, qcr.result10,
+		qcr.createDate, qcr.modifyDate, qcr.del_flag, qcr.dept_id, qcr.tenant_id, qcr.sigil,
+		b.name AS createAt, c.name AS modifyAt,
+		qgr.gascylindercode, qcc.checkname, jqz.name jqzName FROM qp_checkrecord qcr
+		left join qp_gascylinderrecord qgr on qcr.gascylinderrecord_id = qgr.id
+		left join qp_gascylinderlabelchanges qglc on qgr.id = qglc.gascylinderrecord_id
+		left join qp_checkconfig qcc on qcr.checkconfig_id = qcc.id
+		LEFT JOIN qp_operator b ON qcr.createAt = b.user_id
+		LEFT JOIN qp_operator c ON qcr.modifyAt = c.user_id
+		LEFT JOIN qp_jqz jqz ON qcr.dept_id = jqz.dept_id
+		<where>
+			qcr.del_flag = '0'
+			<if test="query.checktypeValue != null and query.checktypeValue != '' and query.checktypeValue != 0">
+				AND qcc.checktype = #{query.checktypeValue}
+			</if>
+			<if test="query.resultValue != null and query.resultValue != '' and query.resultValue != 0">
+				AND qcr.result = #{query.resultValue}
+			</if>
+			<if test="query.gascylinderrecordCode != null and query.gascylinderrecordCode != ''">
+				AND (qgr.gascylindercode = #{query.gascylinderrecordCode}
+				OR qglc.electroniclabel = #{query.gascylinderrecordCode})
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qcr.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qcr.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qcr.createDate DESC
+	</select>
+
+	<!-- 根据气瓶检验配置项名称查询气瓶检验配置项列表 -->
+	<select id="getQpCheckconfigList" resultType="map">
+		SELECT qcc.id, qcc.checkname, qcc.dept_id FROM qp_checkconfig qcc
+		<where>
+			qcc.del_flag = '0'
+			<if test="query.gascylinderrecordId != null and query.gascylinderrecordId != ''">
+				AND qcc.gascylinderrecord_id = #{query.gascylinderrecordId}
+			</if>
+			<if test="query.checkname != null and query.checkname != ''">
+				AND qcc.checkname like CONCAT('%', #{query.checkname},'%')
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qcc.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qcc.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qcc.createDate DESC
+	</select>
+
+	<!-- 根据气瓶检验配置项名称查询气瓶检验配置项列表 -->
+	<select id="getQpCheckRecordList" resultType="map">
+		SELECT qcc.*,qcf.checkname FROM qp_checkrecord qcc
+		LEFT JOIN qp_checkconfig qcf on qcc.checkconfig_id=qcf.id
+
+		<where>
+			qcc.del_flag = '0'
+			<if test="query.gascylinderrecordId != null and query.gascylinderrecordId != ''">
+				AND qcc.gascylinderrecord_id = #{query.gascylinderrecordId}
+			</if>
+			<if test="query.checkname != null and query.checkname != ''">
+				AND qcc.checkname like CONCAT('%', #{query.checkname},'%')
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qcc.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qcc.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qcc.createDate DESC
+	</select>
+</mapper>

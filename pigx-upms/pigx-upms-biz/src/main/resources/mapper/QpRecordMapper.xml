@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.QpRecordMapper">
+
+  <resultMap id="qpRecordMap" type="com.pig4cloud.pigx.admin.entity.QpRecord">
+                  <id property="id" column="id"/>
+	  					<result property="gascylinderrecordId" column="gascylinderrecord_id"/>
+                        <result property="fillingquantity" column="fillingQuantity"/>
+                        <result property="fillingpressure" column="fillingPressure"/>
+                        <result property="createat" column="createAt"/>
+                        <result property="createdate" column="createDate"/>
+                        <result property="modifyat" column="modifyAt"/>
+                        <result property="modifydate" column="modifyDate"/>
+                        <result property="delFlag" column="del_flag"/>
+                        <result property="deptId" column="dept_id"/>
+                        <result property="tenantId" column="tenant_id"/>
+                        <result property="sigil" column="sigil"/>
+	  					<result property="isPerform" column="is_perform"/>
+	  					<result property="fillingUnit" column="filling_unit"/>
+            </resultMap>
+
+	<sql id= "userColumn ">
+		qr.id, qr.gascylinderrecord_id, qr.fillingQuantity, qr.fillingPressure, qr.createDate,
+		 qr.modifyDate, qr.del_flag, qr.dept_id, qr.tenant_id, qr.sigil
+	</sql>
+
+	<!-- 分页查询 （废弃，使用下边新sql）
+	<select id="getQpRecordPage" resultType="com.pig4cloud.pigx.admin.entity.QpRecord">
+		SELECT qr.id, qr.gascylinderrecord_id, qr.fillingQuantity, qr.fillingPressure, qr.createDate,
+		qr.modifyDate, qr.del_flag, qr.dept_id, qr.tenant_id, qr.sigil,
+		b.name AS createAt, c.name AS modifyAt, ckbef.result AS beforeRes, ckaft.result AS afterRes,
+		qgr.gascylindercode FROM qp_record qr
+		left join qp_gascylinderrecord qgr on qr.gascylinderrecord_id = qgr.id
+		LEFT JOIN qp_operator b ON qr.createAt = b.user_id
+		LEFT JOIN qp_operator c ON qr.modifyAt = c.user_id
+		LEFT JOIN qp_checkrecord ckbef ON qr.before_checkrecord_id = ckbef.id
+		LEFT JOIN qp_checkrecord ckaft ON qr.after_checkrecord_id = ckaft.id
+		<where>
+			qr.del_flag = '0'
+			<if test="query.gascylinderrecordId != null and query.gascylinderrecordId != ''">
+				AND qr.gascylinderrecord_id = #{query.gascylinderrecordId}
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qr.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qr.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qr.createDate DESC
+	</select>
+	-->
+	<select id="getQpRecordPage" resultType="com.pig4cloud.pigx.admin.entity.QpRecord">
+		SELECT
+			aa.*,
+			bb.result as beforeRes, bb.beforeDate, bb.beforePeople,
+			cc.result as afterRes, cc.afterDate, cc.afterPeople
+		FROM
+			(SELECT qr.id, qr.gascylinderrecord_id, qr.fillingQuantity, qr.fillingPressure, qr.createDate,
+			qr.modifyDate, qr.del_flag, qr.dept_id, qr.tenant_id, qr.sigil, qr.is_perform,
+			b.name AS createAt, c.name AS modifyAt,
+			qgr.gascylindercode, jqz.name jqzName,
+			qm.name materialName,
+			CASE WHEN qr.filling_unit IS NULL THEN qm.fillingUnit ELSE qr.filling_unit END AS fillingUnit
+			FROM qp_record qr
+			left join qp_gascylinderrecord qgr on qr.gascylinderrecord_id = qgr.id
+			LEFT JOIN qp_operator b ON qr.createAt = b.user_id
+			LEFT JOIN qp_operator c ON qr.modifyAt = c.user_id
+			LEFT JOIN qp_jqz jqz ON qr.dept_id = jqz.dept_id
+			LEFT JOIN qp_material qm ON qm.id = qgr.material_id
+			<where>
+				qr.del_flag = '0'
+				<if test="query.gascylinderrecordId != null and query.gascylinderrecordId != ''">
+					AND qr.gascylinderrecord_id = #{query.gascylinderrecordId}
+				</if>
+				<if test="query.deptId != null and query.deptId != ''">
+					AND qr.dept_id = #{query.deptId}
+				</if>
+				<if test="query.tenantId != null and query.tenantId != ''">
+					AND qr.tenant_id = #{query.tenantId}
+				</if>
+				<if test="query.isPerform != null and query.isPerform != ''">
+					AND qr.is_perform = #{query.isPerform}
+				</if>
+			</where>) aa
+		LEFT JOIN (
+			SELECT
+			cr.sigil,
+			cr.result,
+			oper.name beforePeople,
+			cr.createDate beforeDate
+			FROM
+			qp_checkrecord cr
+			LEFT JOIN qp_checkconfig cf ON cr.checkconfig_id = cf.id
+			LEFT JOIN qp_operator oper ON cr.createAt = oper.user_id
+			WHERE
+			cf.checktype = 1
+		) bb ON aa.sigil = bb.sigil
+		LEFT JOIN (
+			SELECT
+			cr.sigil,
+			cr.result,
+			oper.name afterPeople,
+			cr.createDate afterDate
+			FROM
+			qp_checkrecord cr
+			LEFT JOIN qp_checkconfig cf ON cr.checkconfig_id = cf.id
+			LEFT JOIN qp_operator oper ON cr.createAt = oper.user_id
+			WHERE
+			cf.checktype = 2
+		) cc ON aa.sigil = cc.sigil
+		ORDER BY aa.createDate DESC
+	</select>
+
+	<!-- 根据气瓶钢印编号查询气瓶档案记录列表 -->
+	<select id="getQpGascylinderrecordList" resultType="map">
+		SELECT qgr.id, qgr.gascylindercode, qgr.dept_id,
+			CASE qgr.instate
+				WHEN 14 THEN 2
+				WHEN 10 THEN 3
+				WHEN 15 THEN 4
+				WHEN 13 THEN 5
+				ELSE 1
+			END AS status
+		FROM qp_gascylinderrecord qgr
+		<where>
+			qgr.del_flag = '0'
+			<if test="query.gascylindercode != null and query.gascylindercode != ''">
+				AND qgr.gascylindercode like CONCAT('%', #{query.gascylindercode},'%')
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qgr.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qgr.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qgr.createDate DESC
+	</select>
+
+
+	<select id="getQprrecordListByCode" resultType="com.pig4cloud.pigx.admin.entity.QpRecord">
+		SELECT
+			aa.*,
+			bb.result as beforeRes, bb.beforeDate, bb.beforePeople,
+			cc.result as afterRes, cc.afterDate, cc.afterPeople
+		FROM
+		(SELECT qr.id, qr.gascylinderrecord_id, qr.fillingQuantity, qr.fillingPressure, qr.createDate,
+			qr.modifyDate, qr.del_flag, qr.dept_id, qr.tenant_id, qr.sigil, qr.filling_unit,
+			b.name AS createAt, c.name AS modifyAt,
+			qgr.gascylindercode FROM qp_record qr
+			left join qp_gascylinderrecord qgr on qr.gascylinderrecord_id = qgr.id
+			LEFT JOIN qp_operator b ON qr.createAt = b.user_id
+			LEFT JOIN qp_operator c ON qr.modifyAt = c.user_id
+			<where>
+				qr.del_flag = '0'
+				<if test="query.gascylinderrecordId != null and query.gascylinderrecordId != ''">
+					AND qr.gascylinderrecord_id = #{query.gascylinderrecordId}
+				</if>
+
+				<if test="query.deptId != null and query.deptId != ''">
+					AND qr.dept_id = #{query.deptId}
+				</if>
+				<if test="query.tenantId != null and query.tenantId != ''">
+					AND qr.tenant_id = #{query.tenantId}
+				</if>
+			</where>) aa
+		LEFT JOIN (
+			SELECT
+			cr.sigil,
+			cr.result,
+			oper.name beforePeople,
+			cr.createDate beforeDate
+			FROM
+			qp_checkrecord cr
+			LEFT JOIN qp_checkconfig cf ON cr.checkconfig_id = cf.id
+			LEFT JOIN qp_operator oper ON cr.createAt = oper.user_id
+			WHERE
+			cf.checktype = 1
+			) bb ON aa.sigil = bb.sigil
+		LEFT JOIN (
+			SELECT
+			cr.sigil,
+			cr.result,
+			oper.name afterPeople,
+			cr.createDate afterDate
+			FROM
+			qp_checkrecord cr
+			LEFT JOIN qp_checkconfig cf ON cr.checkconfig_id = cf.id
+			LEFT JOIN qp_operator oper ON cr.createAt = oper.user_id
+			WHERE
+			cf.checktype = 2
+			) cc ON aa.sigil = cc.sigil
+		ORDER BY aa.createDate DESC
+	</select>
+
+	<select id="queryIsitablacklist" resultType="int">
+		SELECT
+		count(id)
+		FROM
+		qp_gascylinderrecord
+		WHERE
+		((DATE_FORMAT(nextcheckdate, '%Y-%m-%d') BETWEEN
+		DATE_FORMAT(CURDATE(), '%Y-%m-%d')
+		AND DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 5 DAY), '%Y-%m-%d'))
+		OR (DATE_FORMAT(nextcheckdate, '%Y-%m-%d') &lt;= DATE_FORMAT(CURDATE(), '%Y-%m-%d')))
+		AND id = #{gascylinderrecordId}
+	</select>
+
+</mapper>

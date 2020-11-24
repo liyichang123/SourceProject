@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.QpCheckconfigMapper">
+
+  <resultMap id="qpCheckconfigMap" type="com.pig4cloud.pigx.admin.entity.QpCheckconfig">
+                  <id property="id" column="id"/>
+                        <result property="checkname" column="checkname"/>
+                        <result property="checktype" column="checktype"/>
+                        <result property="materialId" column="material_id"/>
+                        <result property="option1" column="option1"/>
+                        <result property="option2" column="option2"/>
+                        <result property="option3" column="option3"/>
+                        <result property="option4" column="option4"/>
+                        <result property="option5" column="option5"/>
+                        <result property="option6" column="option6"/>
+                        <result property="option7" column="option7"/>
+                        <result property="option8" column="option8"/>
+                        <result property="option9" column="option9"/>
+                        <result property="option10" column="option10"/>
+                        <result property="createat" column="createAt"/>
+                        <result property="createdate" column="createDate"/>
+                        <result property="modifyat" column="modifyAt"/>
+                        <result property="modifydate" column="modifyDate"/>
+                        <result property="delFlag" column="del_flag"/>
+                        <result property="deptId" column="dept_id"/>
+                        <result property="tenantId" column="tenant_id"/>
+            </resultMap>
+
+	<!-- 分页查询 -->
+	<select id="getQpCheckconfigPage" resultType="com.pig4cloud.pigx.admin.entity.QpCheckconfig">
+		SELECT * FROM qp_checkconfig qc
+		<where>
+			qc.del_flag = '0'
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qc.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qc.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qc.createDate DESC
+	</select>
+
+	<!-- 列表查询 -->
+	<select id="getQpCheckconfigList" resultType="com.pig4cloud.pigx.admin.entity.QpCheckconfig">
+		SELECT * FROM qp_checkconfig qc
+		<where>
+			qc.del_flag = '0'
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qc.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qc.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qc.createDate DESC
+	</select>
+
+	<select id="getQpCheckconfigMapById" resultType="com.pig4cloud.pigx.admin.entity.QpCheckconfig">
+		SELECT qc.*, qm.name material_name FROM qp_checkconfig qc
+		LEFT JOIN qp_material qm ON qc.material_id = qm.id
+		<where>
+			qc.del_flag = '0'
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qc.material_id = #{query.materialId}
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qc.checktype = #{query.checktype}
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qc.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qc.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+	</select>
+
+</mapper>

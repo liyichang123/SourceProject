@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.QpGascylinderrecordMapper">
+
+  <resultMap id="qpGascylinderrecordMap" type="com.pig4cloud.pigx.admin.entity.QpGascylinderrecord">
+                  <id property="id" column="id"/>
+                        <result property="gascylindercode" column="gascylindercode"/>
+                        <result property="gascylinderurl" column="gascylinderurl"/>
+                        <result property="manufacturedate" column="manufacturedate"/>
+                        <result property="manufactoryId" column="manufactory_id"/>
+                        <result property="manufactorypermissionId" column="manufactorypermission_id"/>
+                        <result property="gascylindertypeId" column="gascylindertype_id"/>
+                        <result property="materialId" column="material_id"/>
+                        <result property="usagelimitation" column="usagelimitation"/>
+                        <result property="checkdate" column="checkdate"/>
+                        <result property="nextcheckdate" column="nextcheckdate"/>
+                        <result property="capacity" column="capacity"/>
+                        <result property="weight" column="weight"/>
+                        <result property="regularlycheckcycle" column="regularlycheckcycle"/>
+                        <result property="instate" column="instate"/>
+                        <result property="createat" column="createAt"/>
+                        <result property="createdate" column="createDate"/>
+                        <result property="modifyat" column="modifyAt"/>
+                        <result property="modifydate" column="modifyDate"/>
+                        <result property="delFlag" column="del_flag"/>
+                        <result property="deptId" column="dept_id"/>
+                        <result property="tenantId" column="tenant_id"/>
+	  					<result column="valve_manufacturing_name" property="valveManufacturingName"/>
+						<result column="valve_manufacturing_model" property="valveManufacturingModel"/>
+	  					<result column="registration_mark_no" property="registrationMarkNo"/>
+	  					<result column="registration_mark_photo" property="registrationMarkPhoto"/>
+						<result column="inspection_mark_photo" property="inspectionMarkPhoto"/>
+						<result column="purchase_type" property="purchaseType"/>
+	  					<result column="purchase_type_remark" property="purchaseTypeRemark"/>
+						<result column="nominal_pressure" property="nominalPressure"/>
+						<result column="design_wall_thickness" property="designWallThickness"/>
+						<result column="scrapDate" property="scrapdate"/>
+						<result column="model_number" property="modelNumber"/>
+						<result column="inspection_result" property="inspectionResult"/>
+						<result column="inspection_result_photo" property="inspectionResultPhoto"/>
+						<result column="inspection_user_id" property="inspectionUserId"/>
+            </resultMap>
+
+			<resultMap id="qpaMap" type="com.pig4cloud.pigx.admin.entity.QpGascylinderrecord">
+				<id property="id" column="id"/>
+				<result property="gascylindercode" column="gascylindercode"/>
+				<result property="gascylinderurl" column="gascylinderurl"/>
+				<result property="manufacturedate" column="manufacturedate"/>
+				<result property="manufactoryId" column="manufactory_id"/>
+				<result property="manufactorypermissionId" column="manufactorypermission_id"/>
+				<result property="gascylindertypeId" column="gascylindertype_id"/>
+				<result property="materialId" column="material_id"/>
+				<result property="usagelimitation" column="usagelimitation"/>
+				<result property="checkdate" column="checkdate"/>
+				<result property="nextcheckdate" column="nextcheckdate"/>
+				<result property="capacity" column="capacity"/>
+				<result property="weight" column="weight"/>
+				<result property="regularlycheckcycle" column="regularlycheckcycle"/>
+				<result property="instate" column="instate"/>
+				<result property="createat" column="createAt"/>
+				<result property="createdate" column="createDate"/>
+				<result property="modifyat" column="modifyAt"/>
+				<result property="modifydate" column="modifyDate"/>
+				<result property="delFlag" column="del_flag"/>
+				<result property="deptId" column="dept_id"/>
+				<result property="tenantId" column="tenant_id"/>
+				<result property="electroniclabeltype" column="electroniclabeltype"/>
+				<result property="electroniclabel" column="electroniclabel"/>
+				<result property="factoryPermissionName" column="factoryPermissionName"/>
+				<result property="gascylindertypeName" column="gascylindertypeName"/>
+				<result property="materialName" column="materialName"/>
+				<result property="fillingUnit" column="fillingUnit"/>
+				<result property="fillingPressure" column="fillingPressure"/>
+				<result column="model_number" property="modelNumber"/>
+				<result column="inspection_result" property="inspectionResult"/>
+				<result column="inspection_result_photo" property="inspectionResultPhoto"/>
+				<result column="inspection_user_id" property="inspectionUserId"/>
+			</resultMap>
+
+	<sql id="getPageSql">
+		qpa.id, qpa.gascylindercode, qpa.gascylinderurl, qpa.manufacturedate, qpa.manufactory_id,
+		 qpa.manufactorypermission_id, qpa.gascylindertype_id, qpa.material_id, qpa.usagelimitation,
+		 qpa.checkdate, qpa.nextcheckdate, qpa.capacity, qpa.weight, qpa.regularlycheckcycle, qpa.instate, qpa.createDate,
+		 qpa.modifyDate, qpa.del_flag, qpa.dept_id, qpa.tenant_id, qpa.valve_manufacturing_name,
+		 qpa.valve_manufacturing_model, qpa.registration_mark_no, qpa.registration_mark_photo,
+		 qpa.inspection_mark_photo, qpa.purchase_type, qpa.purchase_type_remark,
+		 qpa.nominal_pressure, qpa.design_wall_thickness, qpa.scrapDate, qpa.model_number,
+		 qpa.inspection_result, qpa.inspection_result_photo, qpa.inspection_user_id
+	</sql>
+	<select id="getPage" resultType="com.pig4cloud.pigx.admin.entity.QpGascylinderrecord">
+		SELECT qpa.id, qpa.gascylindercode, qpa.gascylinderurl, qpa.manufacturedate, qpa.manufactory_id,
+		qpa.manufactorypermission_id, qpa.gascylindertype_id, qpa.material_id, qpa.usagelimitation,
+		qpa.checkdate, qpa.nextcheckdate, qpa.capacity, qpa.weight, qpa.regularlycheckcycle, qpa.instate, qpa.createDate,
+		qpa.modifyDate, qpa.del_flag, qpa.dept_id, qpa.tenant_id, qpa.valve_manufacturing_name,
+		qpa.valve_manufacturing_model, qpa.registration_mark_no, qpa.registration_mark_photo,
+		qpa.inspection_mark_photo, qpa.purchase_type, qpa.purchase_type_remark,
+		qpa.nominal_pressure, qpa.design_wall_thickness, qpa.scrapDate, qpa.model_number,
+		qpa.inspection_result, qpa.inspection_result_photo, qpa.inspection_user_id,b.name AS createAt, c.name AS modifyAt
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+			,qpc.electroniclabel
+			,qf.name factoryName
+			,qfp.permission factoryPermissionName
+			,qpg.name gascylindertypeName
+			,qpm.name materialName
+			,qpm.fillingUnit fillingUnit
+			,qpm.fillingPressure fillingPressure
+			,jqz.name jqzName
+		FROM qp_gascylinderrecord qpa
+			LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+			LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+			LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+			LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+			LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+			LEFT JOIN qp_operator b ON qpa.createAt = b.user_id
+			LEFT JOIN qp_operator c ON qpa.modifyAt = c.user_id
+			LEFT JOIN qp_jqz jqz ON qpa.dept_id = jqz.dept_id
+		where (qpa.del_flag = '0' and qpc.del_flag = '0')
+		<if test="query.gascylindercode != null and query.gascylindercode != ''">
+			AND qpa.gascylindercode = #{query.gascylindercode} OR qpc.electroniclabel = #{query.gascylindercode}
+		</if>
+		<if test="query.manufactoryId != null and query.manufactoryId != ''">
+			AND qpa.manufactory_id = #{query.manufactoryId}
+		</if>
+		<if test="query.manufactorypermissionId != null and query.manufactorypermissionId != ''">
+			AND qpa.manufactorypermission_id = #{query.manufactorypermissionId}
+		</if>
+		<if test="query.gascylindertypeId != null and query.gascylindertypeId != ''">
+			AND qpa.gascylindertype_id = #{query.gascylindertypeId}
+		</if>
+		<if test="query.materialId != null and query.materialId != ''">
+			AND qpa.material_id = #{query.materialId}
+		</if>
+
+		<if test="query.tenantId != null and query.tenantId != ''">
+			AND qpa.tenant_id = #{query.tenantId}
+		</if>
+		<if test="query.searchMonth != null and query.searchMonth != ''">
+			AND qpa.createdate like CONCAT('%',#{query.searchMonth},'%')
+		</if>
+		<if test="query.registrationMarkNo != null and query.registrationMarkNo != ''">
+			AND qpa.registration_mark_no = #{query.registrationMarkNo}
+		</if>
+		<if test="query.statusArray != null">
+			AND qpa.instate in
+			<foreach collection="query.statusArray" item="item" index="index" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="query.deptId != null and query.deptId != ''">
+			AND qpa.dept_id = #{query.deptId}
+		</if>
+		<if test="query.startTime != null and query.startTime != ''">
+			AND DATE_FORMAT(qpa.nextcheckdate, '%Y-%m-%d') &gt;= #{query.startTime}
+		</if>
+		<if test="query.endTime != null and query.endTime != ''">
+			AND DATE_FORMAT(qpa.nextcheckdate, '%Y-%m-%d') &lt;= #{query.endTime}
+		</if>
+			ORDER BY qpa.createDate DESC
+	</select>
+
+
+	<select id="warninglist"  resultType="map">
+		SELECT qpa.*
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+		,qpc.electroniclabel
+		,qf.name factoryName
+		,qfp.permission factoryPermissionName
+		,qpg.name gascylindertypeName
+		,qpm.name materialName
+		,qpm.fillingUnit fillingUnit
+		,qpm.fillingPressure fillingPressure
+		,jqz.name jqzName
+		FROM qp_gascylinderrecord qpa
+		LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+		LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+		LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+		LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+		LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+		LEFT JOIN qp_jqz jqz ON qpa.dept_id = jqz.dept_id
+			where date_format(qpa.nextcheckdate,'%Y-%m-%d') BETWEEN date_format(date_sub(now(), interval 5 day),'%Y-%m-%d') and date_format(now(),'%Y-%m-%d')
+			and (qpa.del_flag = '0' and qpc.del_flag = '0')
+		<if test="query.gascylindercode != null and query.gascylindercode != ''">
+			AND qpa.gascylindercode = #{query.gascylindercode} OR qpc.electroniclabel = #{query.gascylindercode}
+		</if>
+		<if test="query.manufactoryId != null and query.manufactoryId != ''">
+			AND qpa.manufactory_id = #{query.manufactoryId}
+		</if>
+		<if test="query.manufactorypermissionId != null and query.manufactorypermissionId != ''">
+			AND qpa.manufactorypermission_id = #{query.manufactorypermissionId}
+		</if>
+		<if test="query.gascylindertypeId != null and query.gascylindertypeId != ''">
+			AND qpa.gascylindertype_id = #{query.gascylindertypeId}
+		</if>
+		<if test="query.materialId != null and query.materialId != ''">
+			AND qpa.material_id = #{query.materialId}
+		</if>
+		<if test="query.deptId != null and query.deptId != ''">
+			AND qpa.dept_id = #{query.deptId}
+		</if>
+		<if test="query.tenantId != null and query.tenantId != ''">
+			AND qpa.tenant_id = #{query.tenantId}
+		</if>
+		ORDER BY qpa.createDate DESC
+	</select>
+	<select id="blacklist"  resultType="map">
+		SELECT qpa.*
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+		,qpc.electroniclabel
+		,qf.name factoryName
+		,qfp.permission factoryPermissionName
+		,qpg.name gascylindertypeName
+		,qpm.name materialName
+		,qpm.fillingUnit fillingUnit
+		,qpm.fillingPressure fillingPressure
+		,jqz.name jqzName
+		FROM qp_gascylinderrecord qpa
+		LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+		LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+		LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+		LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+		LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+		LEFT JOIN qp_jqz jqz ON qpa.dept_id = jqz.dept_id
+		<where>
+			 (qpa.del_flag = '0' and qpc.del_flag = '0')
+			<if test="query.blackReason == '1'.toString()">
+				AND date_format(qpa.nextcheckdate,'%Y-%m-%d') &lt; date_format(now(),'%Y-%m-%d')
+			</if>
+			<if test="query.blackReason == '2'.toString()">
+				AND date_format(qpa.scrapDate,'%Y-%m-%d') &lt; date_format(now(),'%Y-%m-%d')
+			</if>
+			<if test="query.gascylindercode != null and query.gascylindercode != ''">
+				AND (qpa.gascylindercode = #{query.gascylindercode} OR qpc.electroniclabel = #{query.gascylindercode})
+			</if>
+			<if test="query.manufactoryId != null and query.manufactoryId != ''">
+				AND qpa.manufactory_id = #{query.manufactoryId}
+			</if>
+			<if test="query.manufactorypermissionId != null and query.manufactorypermissionId != ''">
+				AND qpa.manufactorypermission_id = #{query.manufactorypermissionId}
+			</if>
+			<if test="query.gascylindertypeId != null and query.gascylindertypeId != ''">
+				AND qpa.gascylindertype_id = #{query.gascylindertypeId}
+			</if>
+			<if test="query.materialId != null and query.materialId != ''">
+				AND qpa.material_id = #{query.materialId}
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qpa.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qpa.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qpa.createDate DESC
+	</select>
+
+
+	<select id="sleeplist"  resultType="map">
+		<!--SELECT qpa.*
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+		,qpc.electroniclabel
+		,qf.name factoryName
+		,qfp.permission factoryPermissionName
+		,qpg.name gascylindertypeName
+		,qpm.name materialName
+		,qpm.fillingUnit fillingUnit
+		,qpm.fillingPressure fillingPressure
+		FROM (select aa.gascylinderrecord_id,aa.createDate from (
+		select gascylinderrecord_id,max(createDate)  as createDate from qp_checkrecord group by gascylinderrecord_id) aa
+		where date_format(aa.createDate,'%Y-%m-%d') &lt;  date_format(date_sub(now(), interval 30 day),'%Y-%m-%d') ) aa
+		LEFT JOIN qp_gascylinderrecord qpa on qpa.id=aa.gascylinderrecord_id
+		LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+		LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+		LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+		LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+		LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+		where  (qpa.del_flag = '0' and qpc.del_flag = '0')
+		<if test="query.gascylindercode != null and query.gascylindercode != ''">
+			AND qpa.gascylindercode = #{query.gascylindercode} OR qpc.electroniclabel = #{query.gascylindercode}
+		</if>
+		<if test="query.manufactoryId != null and query.manufactoryId != ''">
+			AND qpa.manufactory_id = #{query.manufactoryId}
+		</if>
+		<if test="query.manufactorypermissionId != null and query.manufactorypermissionId != ''">
+			AND qpa.manufactorypermission_id = #{query.manufactorypermissionId}
+		</if>
+		<if test="query.gascylindertypeId != null and query.gascylindertypeId != ''">
+			AND qpa.gascylindertype_id = #{query.gascylindertypeId}
+		</if>
+		<if test="query.materialId != null and query.materialId != ''">
+			AND qpa.material_id = #{query.materialId}
+		</if>
+		<if test="query.deptId != null and query.deptId != ''">
+			AND qpa.dept_id = #{query.deptId}
+		</if>
+		<if test="query.tenantId != null and query.tenantId != ''">
+			AND qpa.tenant_id = #{query.tenantId}
+		</if>
+		UNION-->
+
+		SELECT qpa.*
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+		,qpc.electroniclabel
+		,qf.name factoryName
+		,qfp.permission factoryPermissionName
+		,qpg.name gascylindertypeName
+		,qpm.name materialName
+		,qpm.fillingUnit fillingUnit
+		,qpm.fillingPressure fillingPressure
+		,jqz.name jqzName
+		FROM (select aa.gascylinderrecord_id,aa.createDate from (
+		select gascylinderrecord_id,max(createDate)  as createDate from qp_in_out_store where in_out_type =0 and del_flag=0  group by gascylinderrecord_id) aa
+		where date_format(aa.createDate,'%Y-%m-%d') &lt;  date_format(date_sub(now(), interval 30 day),'%Y-%m-%d') ) aa
+		LEFT JOIN qp_gascylinderrecord qpa on qpa.id=aa.gascylinderrecord_id
+		LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+		LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+		LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+		LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+		LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+		LEFT JOIN qp_jqz jqz ON qpa.dept_id = jqz.dept_id
+		where (qpa.del_flag = '0' and qpc.del_flag = '0')
+		<if test="query.gascylindercode != null and query.gascylindercode != ''">
+			AND qpa.gascylindercode = #{query.gascylindercode} OR qpc.electroniclabel = #{query.gascylindercode}
+		</if>
+		<if test="query.manufactoryId != null and query.manufactoryId != ''">
+			AND qpa.manufactory_id = #{query.manufactoryId}
+		</if>
+		<if test="query.manufactorypermissionId != null and query.manufactorypermissionId != ''">
+			AND qpa.manufactorypermission_id = #{query.manufactorypermissionId}
+		</if>
+		<if test="query.gascylindertypeId != null and query.gascylindertypeId != ''">
+			AND qpa.gascylindertype_id = #{query.gascylindertypeId}
+		</if>
+		<if test="query.materialId != null and query.materialId != ''">
+			AND qpa.material_id = #{query.materialId}
+		</if>
+		<if test="query.deptId != null and query.deptId != ''">
+			AND qpa.dept_id = #{query.deptId}
+		</if>
+		<if test="query.tenantId != null and query.tenantId != ''">
+			AND qpa.tenant_id = #{query.tenantId}
+		</if>
+
+
+		<!--UNION
+
+		SELECT qpa.*
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+		,qpc.electroniclabel
+		,qf.name factoryName
+		,qfp.permission factoryPermissionName
+		,qpg.name gascylindertypeName
+		,qpm.name materialName
+		,qpm.fillingUnit fillingUnit
+		,qpm.fillingPressure fillingPressure
+		FROM (select aa.gascylinderrecord_id,aa.createDate from (
+		select gascylinderrecord_id,max(createDate)  as createDate from qp_record group by gascylinderrecord_id) aa
+		where date_format(aa.createDate,'%Y-%m-%d') &lt;  date_format(date_sub(now(), interval 30 day),'%Y-%m-%d') ) aa
+		LEFT JOIN qp_gascylinderrecord qpa on qpa.id=aa.gascylinderrecord_id
+		LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+		LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+		LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+		LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+		LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+
+		where  (qpa.del_flag = '0' and qpc.del_flag = '0')
+		<if test="query.gascylindercode != null and query.gascylindercode != ''">
+			AND qpa.gascylindercode = #{query.gascylindercode} OR qpc.electroniclabel = #{query.gascylindercode}
+		</if>
+		<if test="query.manufactoryId != null and query.manufactoryId != ''">
+			AND qpa.manufactory_id = #{query.manufactoryId}
+		</if>
+		<if test="query.manufactorypermissionId != null and query.manufactorypermissionId != ''">
+			AND qpa.manufactorypermission_id = #{query.manufactorypermissionId}
+		</if>
+		<if test="query.gascylindertypeId != null and query.gascylindertypeId != ''">
+			AND qpa.gascylindertype_id = #{query.gascylindertypeId}
+		</if>
+		<if test="query.materialId != null and query.materialId != ''">
+			AND qpa.material_id = #{query.materialId}
+		</if>
+		<if test="query.deptId != null and query.deptId != ''">
+			AND qpa.dept_id = #{query.deptId}
+		</if>
+		<if test="query.tenantId != null and query.tenantId != ''">
+			AND qpa.tenant_id = #{query.tenantId}
+		</if>-->
+
+		ORDER BY createDate DESC
+	</select>
+	<select id="getGascylinderrecordByCode" resultType="com.pig4cloud.pigx.admin.entity.QpGascylinderrecord">
+		SELECT qpa.id, qpa.gascylindercode, qpa.gascylinderurl, qpa.manufacturedate, qpa.manufactory_id,
+		qpa.manufactorypermission_id, qpa.gascylindertype_id, qpa.material_id, qpa.usagelimitation,
+		qpa.checkdate, qpa.nextcheckdate, qpa.capacity, qpa.weight, qpa.regularlycheckcycle, qpa.instate, qpa.createDate,
+		qpa.modifyDate, qpa.del_flag, qpa.dept_id, qpa.tenant_id, qpa.valve_manufacturing_name,
+		qpa.valve_manufacturing_model, qpa.registration_mark_no, qpa.registration_mark_photo,
+		qpa.inspection_mark_photo, qpa.purchase_type, qpa.purchase_type_remark,
+		qpa.nominal_pressure, qpa.design_wall_thickness, qpa.scrapDate, qpa.model_number,
+		qpa.inspection_result, qpa.inspection_result_photo, qpa.inspection_user_id, b.name AS createAt, c.name AS modifyAt
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+		,qpc.electroniclabel, qpc.nfc_id nfcId
+		,qf.name factoryName
+		,qfp.permission factoryPermissionName
+		,qpg.name gascylindertypeName
+		,qpm.name materialName
+		,qpm.fillingUnit fillingUnit
+		,qpm.fillingPressure fillingPressure
+		,CASE qpa.instate
+			WHEN 14 THEN 2
+			WHEN 10 THEN 3
+			WHEN 15 THEN 4
+			WHEN 13 THEN 5
+			ELSE 1 END AS status
+		,jqz.name jqzName
+		FROM qp_gascylinderrecord qpa
+		LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+		LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+		LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+		LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+		LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+		LEFT JOIN qp_jqz jqz ON qpa.dept_id = jqz.dept_id
+		LEFT JOIN qp_operator b ON qpa.createAt = b.user_id
+		LEFT JOIN qp_operator c ON qpa.modifyAt = c.user_id
+		where  (qpa.del_flag = '0' and qpc.del_flag = '0')
+		<choose>
+			<when test="codeType == 'nfc'.toString()">
+				and qpc.nfc_id = #{code}
+			</when>
+			<otherwise>
+				AND (qpa.gascylindercode = #{code} OR qpc.electroniclabel = #{code})
+			</otherwise>
+		</choose>
+		ORDER BY qpa.createDate DESC
+	</select>
+
+	<select id="getByCodes" resultType="com.pig4cloud.pigx.admin.entity.QpGascylinderrecord">
+		SELECT qpa.id, qpa.gascylindercode, qpa.gascylinderurl, qpa.manufacturedate, qpa.manufactory_id,
+		qpa.manufactorypermission_id, qpa.gascylindertype_id, qpa.material_id, qpa.usagelimitation,
+		qpa.checkdate, qpa.nextcheckdate, qpa.capacity, qpa.weight, qpa.regularlycheckcycle, qpa.instate, qpa.createDate,
+		qpa.modifyDate, qpa.del_flag, qpa.dept_id, qpa.tenant_id, qpa.valve_manufacturing_name,
+		qpa.valve_manufacturing_model, qpa.registration_mark_no, qpa.registration_mark_photo,
+		qpa.inspection_mark_photo, qpa.purchase_type, qpa.purchase_type_remark,
+		qpa.nominal_pressure, qpa.design_wall_thickness, qpa.scrapDate, qpa.model_number,
+		qpa.inspection_result, qpa.inspection_result_photo, qpa.inspection_user_id,b.name AS createAt, c.name AS modifyAt
+		,case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+			,qpc.electroniclabel
+			,qf.name factoryName
+			,qfp.permission factoryPermissionName
+			,qpg.name gascylindertypeName
+			,qpm.name materialName
+			,qpm.fillingUnit fillingUnit
+			,qpm.fillingPressure fillingPressure
+			,jqz.name jqzName
+		FROM qp_gascylinderrecord qpa
+			LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+			LEFT JOIN qp_manufactory qf on qpa.manufactory_id=qf.id
+			LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+			LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+			LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+			LEFT JOIN qp_operator b ON qpa.createAt = b.user_id
+			LEFT JOIN qp_operator c ON qpa.modifyAt = c.user_id
+			LEFT JOIN qp_jqz jqz ON qpa.dept_id = jqz.dept_id
+		where (qpa.del_flag = '0' and qpc.del_flag = '0')
+		AND qpa.gascylindercode IN
+		<foreach collection="codes" item="item" index="index" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getExcelRecordVoByIds" resultType="com.pig4cloud.pigx.admin.entity.QpGascylinderrecord">
+		SELECT qpa.id, qpa.gascylindercode, qpa.manufacturedate,
+			qpa.usagelimitation,
+			qpa.checkdate, qpa.nextcheckdate, qpa.capacity, qpa.weight, qpa.regularlycheckcycle, qpa.instate, qpa.createDate,
+			qpa.modifyDate, qpa.del_flag, qpa.dept_id, qpa.valve_manufacturing_name,
+			qpa.valve_manufacturing_model, qpa.registration_mark_no,
+			qpa.purchase_type, qpa.purchase_type_remark,
+			qpa.nominal_pressure, qpa.design_wall_thickness, qpa.scrapDate, qpa.model_number,
+			qpa.inspection_result, qpa.inspection_result_photo, qpa.inspection_user_id
+			,qpc.electroniclabeltype electroniclabeltype
+			,qpc.electroniclabel
+			,qf.name factoryName
+			,qfp.permission factoryPermissionName
+			,qpg.name gascylindertypeName
+			,qpm.name materialName
+			,qpm.fillingUnit fillingUnit
+			,qpm.fillingPressure fillingPressure
+			,jqz.name jqzName
+			,CASE qpa.instate
+			WHEN 14 THEN 2
+			WHEN 10 THEN 3
+			WHEN 15 THEN 4
+			WHEN 13 THEN 5
+			ELSE 1 END AS status
+		FROM qp_gascylinderrecord qpa
+			LEFT JOIN qp_gascylinderlabelchanges qpc on qpa.id=qpc.gascylinderrecord_id
+			LEFT JOIN qp_manufactory qf on qpa.manufactory_id = qf.id
+			LEFT JOIN qp_manufactorypermission qfp on qpa.manufactorypermission_id = qfp.id
+			LEFT JOIN qp_gascylindertype qpg on qpa.gascylindertype_id=qpg.id
+			LEFT JOIN qp_material qpm on qpa.material_id=qpm.id
+			LEFT JOIN qp_jqz jqz ON qpa.dept_id = jqz.dept_id
+		where (qpa.del_flag = '0' and qpc.del_flag = '0')
+		    AND qpa.id IN
+		<foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+</mapper>

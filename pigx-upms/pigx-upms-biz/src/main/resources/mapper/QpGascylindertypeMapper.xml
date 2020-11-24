@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.QpGascylindertypeMapper">
+
+  <resultMap id="qpGascylindertypeMap" type="com.pig4cloud.pigx.admin.entity.QpGascylindertype">
+                  <id property="id" column="id"/>
+                        <result property="name" column="name"/>
+                        <result property="limitation" column="limitation"/>
+                        <result property="regularlycheckcycle" column="regularlycheckcycle"/>
+                        <result property="createat" column="createAt"/>
+                        <result property="createdate" column="createDate"/>
+                        <result property="modifyat" column="modifyAt"/>
+                        <result property="modifydate" column="modifyDate"/>
+                        <result property="delFlag" column="del_flag"/>
+                        <result property="deptId" column="dept_id"/>
+                        <result property="tenantId" column="tenant_id"/>
+            </resultMap>
+
+	<!-- 分页查询 -->
+	<select id="getQpGascylindertypePage" resultType="com.pig4cloud.pigx.admin.entity.QpGascylindertype">
+		SELECT * FROM qp_gascylindertype qgt
+		<where>
+			qgt.del_flag = '0'
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qgt.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qgt.createDate DESC
+	</select>
+
+</mapper>

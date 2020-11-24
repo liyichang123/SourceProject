@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.QpInOutStoreMapper">
+
+  <resultMap id="qpInOutStoreMap" type="com.pig4cloud.pigx.admin.entity.QpInOutStore">
+                  <id property="id" column="id"/>
+                        <result property="gascylinderrecordId" column="gascylinderrecord_id"/>
+                        <result property="qpStoreId" column="qp_store_id"/>
+                        <result property="emptyWeightState" column="empty_weight_state"/>
+                        <result property="inOutType" column="in_out_type"/>
+	  					<result column="reason" property="reason"/>
+	  					<result column="remarks" property="remarks"/>
+                        <result property="createat" column="createAt"/>
+                        <result property="createdate" column="createDate"/>
+                        <result property="modifyat" column="modifyAt"/>
+                        <result property="modifydate" column="modifyDate"/>
+                        <result property="delFlag" column="del_flag"/>
+                        <result property="deptId" column="dept_id"/>
+                        <result property="tenantId" column="tenant_id"/>
+	  					<result column="longitude" property="longitude"/>
+						<result column="dimension" property="dimension"/>
+            </resultMap>
+
+	<!-- 分页查询 -->
+	<select id="getQpInOutStorePage" resultType="com.pig4cloud.pigx.admin.entity.QpInOutStore">
+		SELECT qios.id, qios.gascylinderrecord_id, qios.qp_store_id, qios.empty_weight_state, qios.reason, qios.remarks,
+		qios.in_out_type, qios.createDate, qios.modifyDate, qios.del_flag, qios.dept_id, qios.tenant_id, qios.longitude, qios.dimension,
+		b.name AS createAt, c.name AS modifyAt,
+		case qpc.electroniclabeltype when '1' then '芯片' ELSE '二维码' END electroniclabeltype
+		,qpc.electroniclabel,
+		qgr.gascylindercode, jqz.name jqzName FROM qp_in_out_store qios
+		LEFT join qp_gascylinderrecord qgr on qios.gascylinderrecord_id = qgr.id
+		LEFT JOIN qp_gascylinderlabelchanges qpc on qios.gascylinderrecord_id = qpc.gascylinderrecord_id
+		LEFT JOIN qp_operator b ON qios.createAt = b.user_id
+		LEFT JOIN qp_operator c ON qios.modifyAt = c.user_id
+		LEFT JOIN qp_jqz jqz ON qios.dept_id = jqz.dept_id
+		<where>
+			qios.del_flag = '0' AND qgr.del_flag = '0'
+			<if test="query.emptyWeightState != null and query.emptyWeightState != ''">
+				AND qios.empty_weight_state = #{query.emptyWeightState}
+			</if>
+			<if test="query.inOutType != null">
+				AND qios.in_out_type = #{query.inOutType}
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qios.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qios.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+		ORDER BY qios.createDate DESC
+	</select>
+
+	<select id="getQpInOutStoreListByCode" resultType="map">
+		SELECT ios.gascylinderrecord_id,case  ios.empty_weight_state when 1 then '空瓶' ELSE '重瓶' END empty_weight_state,case ios.in_out_type when 0 then '出库' ELSE '入库' end in_out_type ,gs.name ,
+			ios.createDate,ios.del_flag,ios.dept_id,ios.tenant_id, ios.longitude, ios.dimension, ios.in_out_type inOutType, b.name as createAt
+				FROM qp_in_out_store ios
+				LEFT JOIN qp_store gs on ios.qp_store_id = gs.id
+				LEFT JOIN qp_operator b ON ios.createAt = b.user_id
+				WHERE ios.gascylinderrecord_id = #{query.gascylinderrecordId}
+				<if test="query.deptId != null and query.deptId != ''">
+					AND ios.dept_id = #{query.deptId}
+				</if>
+				<if test="query.tenantId != null and query.tenantId != ''">
+					AND ios.tenant_id = #{query.tenantId}
+				</if>
+				ORDER BY ios.createDate desc
+	</select>
+</mapper>

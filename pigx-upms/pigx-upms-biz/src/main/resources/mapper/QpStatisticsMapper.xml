@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~
+  ~      Copyright (c) 2018-2025, lengleng All rights reserved.
+  ~
+  ~  Redistribution and use in source and binary forms, with or without
+  ~  modification, are permitted provided that the following conditions are met:
+  ~
+  ~ Redistributions of source code must retain the above copyright notice,
+  ~  this list of conditions and the following disclaimer.
+  ~  Redistributions in binary form must reproduce the above copyright
+  ~  notice, this list of conditions and the following disclaimer in the
+  ~  documentation and/or other materials provided with the distribution.
+  ~  Neither the name of the pig4cloud.com developer nor the names of its
+  ~  contributors may be used to endorse or promote products derived from
+  ~  this software without specific prior written permission.
+  ~  Author: lengleng (wangiegie@gmail.com)
+  ~
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pig4cloud.pigx.admin.mapper.QpStatisticsMapper">
+
+	<select id="getQpGascylinderNumberTotal" resultType="int">
+		SELECT
+			COUNT(qgr.id)
+		FROM qp_gascylinderrecord qgr
+		<where>
+			<include refid="sqlwhere"/>
+		</where>
+	</select>
+
+	<select id="getQpGascylinderNumberM" resultType="map">
+		SELECT
+			DATE_FORMAT(qgr.createDate, '%Y-%m') AS date, COUNT(qgr.id) AS number
+		FROM qp_gascylinderrecord qgr
+		<where>
+			<include refid="sqlwhere"/>
+		</where>
+		GROUP BY date
+		ORDER BY date ASC
+	</select>
+
+	<select id="getQpGascylinderNumberY" resultType="map">
+		SELECT
+			DATE_FORMAT(qgr.createDate, '%Y') AS date, COUNT(qgr.id) AS number
+		FROM qp_gascylinderrecord qgr
+		<where>
+			<include refid="sqlwhere"/>
+		</where>
+		GROUP BY date
+		ORDER BY date ASC
+	</select>
+
+	<sql id="sqlwhere">
+		qgr.del_flag = 0
+		<if test="query.startTime != null and query.startTime != '' and query.analyzeType == '1'.toString()">
+			AND DATE_FORMAT(qgr.createDate, '%Y-%m') &gt;= #{query.startTime}
+		</if>
+		<if test="query.endTime != null and query.endTime != '' and query.analyzeType == '1'.toString()">
+			AND DATE_FORMAT(qgr.createDate, '%Y-%m') &lt;= #{query.endTime}
+		</if>
+		<if test="query.startTime != null and query.startTime != '' and query.analyzeType == '2'.toString()">
+			AND DATE_FORMAT(qgr.createDate, '%Y') &gt;= #{query.startTime}
+		</if>
+		<if test="query.endTime != null and query.endTime != '' and query.analyzeType == '2'.toString()">
+			AND DATE_FORMAT(qgr.createDate, '%Y') &lt;= #{query.endTime}
+		</if>
+			AND qgr.dept_id in
+			<foreach collection="depts" item="item" index="index" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		<if test="query.tenantId != null and query.tenantId != ''">
+			AND qgr.tenant_id = #{query.tenantId}
+		</if>
+	</sql>
+
+	<select id="getQpGascylinderTypeStatistics" resultType="map">
+		SELECT
+		qgt.name name, COUNT(qgr.id) AS value, qgt.id gascylindertypeId
+		FROM qp_gascylinderrecord qgr right join qp_gascylindertype qgt on qgr.gascylindertype_id = qgt.id
+		<where>
+			<include refid="sqlwhere"/>
+		</where>
+		GROUP BY gascylindertypeId
+	</select>
+
+	<select id="getQpGascylinderWarningPage" resultType="map">
+		select
+			qgr.*,
+			qgl.electroniclabeltype,
+			qgl.electroniclabel,
+			qm.name manufactory_name,
+			qmp.permission manufactorypermission_permission,
+			qgt.name gascylindertype_name,
+			qma.name material_name,
+			enum.name instate_name
+		from qp_gascylinderrecord qgr
+	 	left join qp_gascylinderlabelchanges qgl on qgr.id = qgl.gascylinderrecord_id
+		left join qp_manufactory qm on qgr.manufactory_id = qm.id
+		left join qp_manufactorypermission qmp on qgr.manufactorypermission_id = qmp.id
+		left join qp_gascylindertype qgt on qgr.gascylindertype_id = qgt.id
+		left join qp_material qma on qgr.material_id = qma.id
+		left join sys_enum enum on qgr.instate = enum.id
+		<where>
+			qgr.del_flag = 0
+			AND qgl.del_flag = 0
+			<if test="query.warningType == '1'.toString()">
+				AND DATE_FORMAT(qgr.nextcheckdate, '%Y-%m-%d') &lt; DATE_FORMAT(DATE_ADD(now(), INTERVAL 30 DAY), '%Y-%m-%d')
+			</if>
+			<if test="query.warningType == '2'.toString()">
+				AND DATE_FORMAT(qgr.scrapDate, '%Y-%m-%d') &lt; DATE_FORMAT(DATE_ADD(now(), INTERVAL 30 DAY), '%Y-%m-%d')
+			</if>
+			<if test="query.deptId != null and query.deptId != ''">
+				AND qgr.dept_id = #{query.deptId}
+			</if>
+			<if test="query.tenantId != null and query.tenantId != ''">
+				AND qgr.tenant_id = #{query.tenantId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getDeptsByDeptId" resultType="int">
+		select descendant from sys_dept_relation where ancestor = #{deptId}
+	</select>
+
+	<select id="getQpGascylinderAnalyzeTotal" resultType="int">
+		SELECT
+		COUNT(qgr.id)
+		FROM qp_gascylinderrecord qgr
+		left join qp_gascylinderlabelchanges qgl on qgr.id = qgl.gascylinderrecord_id
+		left join qp_gascylindertype qgt on qgr.gascylindertype_id = qgt.id
+		left join qp_material qm on qgr.material_id = qm.id
+		<where>
+			<include refid="sqlwhere2"/>
+		</where>
+	</select>
+
+	<select id="getQpGascylinderAnalyzeQPLX" resultType="map">
+		SELECT
+		qgt.name name, COUNT(qgr.id) AS value
+		FROM qp_gascylinderrecord qgr
+		left join qp_gascylinderlabelchanges qgl on qgr.id = qgl.gascylinderrecord_id
+		right join qp_gascylindertype qgt on qgr.gascylindertype_id = qgt.id
+		<where>
+			<include refid="sqlwhere2"/>
+		</where>
+		GROUP BY name
+	</select>
+
+	<select id="getQpGascylinderAnalyzeCZJZ" resultType="map">
+		SELECT
+		qm.name name, COUNT(qgr.id) AS value
+		FROM qp_gascylinderrecord qgr
+		left join qp_gascylinderlabelchanges qgl on qgr.id = qgl.gascylinderrecord_id
+		right join qp_material qm on qgr.material_id = qm.id
+		<where>
+			<include refid="sqlwhere2"/>
+		</where>
+		GROUP BY name
+	</select>
+
+	<sql id="sqlwhere2">
+		qgr.del_flag = 0 AND qgl.del_flag = 0
+		<if test="query.startTime != null and query.startTime != ''">
+			AND DATE_FORMAT(qgr.createDate, '%Y-%m-%d') &gt;= #{query.startTime}
+		</if>
+		<if test="query.endTime != null and query.endTime != ''">
+			AND DATE_FORMAT(qgr.createDate, '%Y-%m-%d') &lt;= #{query.endTime}
+		</if>
+		<if test="query.electroniclabelType != null and query.electroniclabelType != '' and query.electroniclabelType != '0'.toString()">
+			AND qgl.electroniclabelType = #{query.electroniclabelType}
+		</if>
+		<if test="query.manufactoryId != null and query.manufactoryId != ''">
+			AND qgr.manufactory_id = #{query.manufactoryId}
+		</if>
+		<if test="query.manufactorypermissionId != null and query.manufactorypermissionId != ''">
+			AND qgr.manufactorypermission_id = #{query.manufactorypermissionId}
+		</if>
+			AND qgr.dept_id in
+			<foreach collection="depts" item="item" index="index" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		<if test="query.tenantId != null and query.tenantId != ''">
+			AND qgr.tenant_id = #{query.tenantId}
+		</if>
+	</sql>
+
+    <select id="getQpGascylinderAnalyzeQPZT" resultType="map">
+		SELECT
+			CASE qgr.instate
+				WHEN 14 THEN '停用'
+				WHEN 10 THEN '超期未检'
+				WHEN 15 THEN '待报废'
+				WHEN 13 THEN '已报废'
+				ELSE '在用' END AS name,
+			COUNT(qgr.id) AS value
+		FROM qp_gascylinderrecord qgr
+		left join qp_gascylinderlabelchanges qgl on qgr.id = qgl.gascylinderrecord_id
+		<where>
+			<include refid="sqlwhere2"/>
+		</where>
+		GROUP BY name
+	</select>
+
+	<select id="getQpInOutStoreCount" resultType="int">
+		SELECT COUNT(ios.id)
+		FROM qp_in_out_store ios
+		INNER JOIN qp_store gs on ios.qp_store_id = gs.id
+		WHERE ios.del_flag = 0
+		<if test="inOutType != null">
+			AND ios.in_out_type = #{inOutType}
+		</if>
+		AND ios.dept_id in
+		<foreach collection="depts" item="item" index="index" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+		<if test="tenantId != null and tenantId != ''">
+			AND ios.tenant_id = #{tenantId}
+		</if>
+	</select>
+
+</mapper>
