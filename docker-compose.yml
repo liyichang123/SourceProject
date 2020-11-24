@@ -1,0 +1,286 @@
+# 使用说明 V3.6.0
+# 1. 使用docker-compose  宿主机不需要配置host来发现
+# 2. 无需修改源码，根目录  docker-compose up 即可
+# 3. 静静等待服务启动
+
+version: '2'
+services:
+  #  trace-mysql:
+  #    build:
+  #      context: ./
+  #      dockerfile: ./db/Dockerfile
+  #    environment:
+  #      MYSQL_ROOT_PASSWORD: root
+  #    restart: always
+  #    container_name: trace-mysql
+  #    image: trace-mysql
+  #    ports:
+  #      - 3306:3306
+  #    volumes:
+  #      - ./trace-mysql:/var/lib/mysql
+  #    command: --lower_case_table_names=1
+  trace-zookeeper:
+    container_name: trace-zookeeper
+    image: zookeeper:3.4.13
+    restart: always
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+
+  trace-xxl:
+    container_name: trace-xxl
+    image: pig4cloud/xxl-job-admin:2.1.1
+    restart: always
+    environment:
+      PARAMS: "--spring.datasource.url=jdbc:mysql://112.126.56.79:33060/traceSource_job?Unicode=true&characterEncoding=UTF-8 --spring.datasource.username=root --spring.datasource.password=Hnqz123456!"
+    ports:
+      - 29080:28080
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  #  trace-redis:
+  #    image: redis:5.0.7
+  #    restart: always
+  #    container_name: trace-redis
+  #    ports:
+  #      - 6379:6379
+
+  trace-minio:
+    container_name: trace-minio
+    image: minio/minio
+    command: server /data
+    ports:
+      - 29000:29000
+    volumes:
+      - ./data:/data
+      - ./config:/root/.minio
+    environment:
+      - MINIO_DOMAIN=trace-minio
+      - MINIO_ACCESS_KEY=lengleng
+      - MINIO_SECRET_KEY=lengleng
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-register:
+    build:
+      context: ./
+      dockerfile: ./pigx-register/Dockerfile
+    restart: always
+    container_name: trace-register
+    image: trace-register
+    ports:
+      - 28848:28848
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-gateway:
+    build:
+      context: ./
+      dockerfile: ./pigx-gateway/Dockerfile
+    restart: always
+    container_name: trace-gateway
+    image: trace-gateway
+    ports:
+      - 29999:29999
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-auth:
+    build:
+      context: ./
+      dockerfile: ./pigx-auth/Dockerfile
+    restart: always
+    container_name: trace-auth
+    image: trace-auth
+    ports:
+      - 23000:23000
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-upms:
+    build:
+      context: ./
+      dockerfile: ./pigx-upms/pigx-upms-biz/Dockerfile
+    restart: always
+    container_name: trace-upms
+    image: trace-upms
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-monitor:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-monitor/Dockerfile
+    restart: always
+    image: trace-monitor
+    container_name: trace-monitor
+    ports:
+      - 25001:25001
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-daemon-quartz:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-daemon-quartz/Dockerfile
+    restart: always
+    image: trace-daemon-quartz
+    container_name: trace-daemon-quartz
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-daemon-elastic-job:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-daemon-elastic-job/Dockerfile
+    restart: always
+    image: trace-daemon-elastic-job
+    container_name: trace-daemon-elastic-job
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-codegen:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-codegen/Dockerfile
+    restart: always
+    image: trace-codegen
+    container_name: trace-codegen
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-mp-platform:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-mp-platform/Dockerfile
+    restart: always
+    image: trace-mp-platform
+    container_name: trace-mp-platform
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-pay-platform:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-pay-platform/Dockerfile
+    restart: always
+    image: trace-pay-platform
+    container_name: trace-pay-platform
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-oa-platform:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-oa-platform/Dockerfile
+    restart: always
+    image: trace-oa-platform
+    container_name: trace-oa-platform
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-tx-manager:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-tx-manager/Dockerfile
+    restart: always
+    image: trace-tx-manager
+    container_name: trace-tx-manager
+    ports:
+      - 25004:25004
+      - 29998:29998
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
+  trace-sentinel:
+    build:
+      context: ./
+      dockerfile: ./pigx-visual/pigx-sentinel-dashboard/Dockerfile
+    restart: always
+    image: trace-sentinel
+    container_name: trace-sentinel
+    ports:
+      - 25020:25020
+    extra_hosts:
+      - "trace-register:112.126.56.79"
+      - "trace-gateway:112.126.56.79"
+      - "trace-redis:120.27.223.62"
+      - "trace-zookeeper:112.126.56.79"
+      - "trace-xxl:112.126.56.79"
+      - "trace-mysql:112.126.56.79"
+      - "trace-sentinel:112.126.56.79"
